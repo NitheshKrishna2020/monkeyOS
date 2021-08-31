@@ -2,12 +2,12 @@ org 0x7c00  ; offset 0x7c00
 bits 16
 
 start:
-    mov bx, message     
+    mov si, message     
     call print_message
     jmp $
 
 print_message:
-    mov al, [bx]
+    lodsb
     cmp al, 0
     je .done
     call print_char
