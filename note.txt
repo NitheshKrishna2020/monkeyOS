@@ -1,0 +1,10 @@
+haonan@haonan-Ubuntu:~/Desktop/monkeyos$ nasm -f bin ./test1.asm -o ./test1.bin
+haonan@haonan-Ubuntu:~/Desktop/monkeyos$ ndisasm test1.bin 
+00000000  B80300            mov ax,0x3
+00000003  2A                db 0x2a
+
+
+haonan@haonan-Ubuntu:~/Desktop/monkeyos$ nasm -f bin ./test2.asm -o ./test2.bin
+haonan@haonan-Ubuntu:~/Desktop/monkeyos$ ndisasm test2.bin 
+00000000  B80201            mov ax,0x102
+00000003  2A                db 0x2a
