@@ -1,13 +1,17 @@
-org 0x7c00  ; offset 0x7c00
+org 0  ; offset 0
 bits 16
 
 start:
-    mov si, message     
+    cli
+    mov ax, 0x7c0
+    mov ds, ax
+    sti
+    mov bx, message     
     call print_message
     jmp $
 
 print_message:
-    lodsb
+    mov al, [bx]
     cmp al, 0
     je .done
     call print_char
