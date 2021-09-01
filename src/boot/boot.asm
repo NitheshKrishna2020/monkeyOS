@@ -58,6 +58,8 @@ gdt_descriptor:
     dd gdt_start
 
 [BITS 32]
+
+; ------ Load kernel to memory 0x100000 ------
 load32:
     mov eax, 1          ; starting sector we want to load, 0 is the boot sector
     mov ecx, 100        ; total number sector we want to load
@@ -65,6 +67,7 @@ load32:
     call ata_lba_read   ; call the dirve and load 100 sectors to memory at 0x0100000
     jmp CODE_SEG:0x0100000
 
+; ------ ATA driver ------
 ata_lba_read:
     mov ebx, eax        ; backup the LBA
     ; send the highest 8 bits of the lba to hard disk controller
