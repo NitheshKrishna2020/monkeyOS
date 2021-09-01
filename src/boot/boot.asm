@@ -1,8 +1,7 @@
 org 0x7c00
 bits 16
-jmp 0:start 
 
-CODE_SEG equ gdt_code - gdt_start   ; offset of codeseg 0x8h
+CODE_SEG equ gdt_code - gdt_start   ; offset of code_seg 0x8h
 DATA_SEG equ gdt_data - gdt_start   ; offset of data_seg
 
 jmp 0:start
@@ -23,7 +22,6 @@ start:
     mov eax, cr0
     or eax, 0x1
     mov cr0, eax            ; finish switching protected mode
-
     jmp CODE_SEG:load32     ; CODE_SEG is the cs in procted mode
 
 
@@ -61,20 +59,69 @@ gdt_descriptor:
 
 [BITS 32]
 load32:
-    mov ax, DATA_SEG
-    mov ds, ax
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
-    mov ss, ax
-    mov ebp, 0x00200000
-    mov esp, ebp
+    mov eax, 1          ; starting sector we want to load, 0 is the boot sector
+    mov ecx, 100        ; total number sector we want to load
+    mov edi, 0x0100000  ; the address we want to load them into RAM
+    call ata_lba_read   ; call the dirve and load 100 sectors to memory at 0x0100000
+    jmp CODE_SEG:0x0100000
 
-    ; enable A20 line
-    in al, 0x92
-    or al, 2
-    out 0x92, al
-    jmp $
+ata_lba_read:
+    mov ebx, eax        ; backup the LBA
+    ; send the highest 8 bits of the lba to hard disk controller
+    shr eax, 24         ; right shift eax 24 bits, then eax contains the 8 highest bit of LBA
+    or eax, 0xE0        ; select master drive
+    mov dx, 0x1F6       ; the port expects the hightest 8 bits
+    out dx, al          
+    ; Finish sending the highest 8 bits of the lba
+
+    ; send the total sectors to the hard disk controller
+    mov eax, ecx
+    mov dx, 0x1F2
+    out dx, al
+    ; finished sending the total sectors to read
+
+    ; send more bits of the lba
+    mov eax, ebx ; restroe the backup lba
+    mov dx, 0x1F3
+    out dx, al
+    ; finish sending more bit of 
+    
+    ; sending more
+    mov dx, 0x1F4
+    mov eax, ebx ; restroe the backup lba
+    shr eax, 8
+    out dx, al
+    ; finish sending more bit of lba
+
+    ; send more uper 16 bits
+    mov dx, 0x1F5
+    mov eax, ebx
+    shr eax, 16
+    out dx, al
+    ; finish sending uper 16 bit of lba
+
+    mov dx, 0x1f7
+    mov al, 0x20
+    out dx, al
+
+; Read all sectors into memory
+.next_sector:
+    push ecx
+
+; checking if we need to read
+.try_again:
+    mov dx, 0x1f7
+    in al, dx
+    test al, 8
+    jz .try_again
+; need to read 256 words at a time
+    mov ecx, 256
+    mov dx, 0x1F0
+    rep insw      ; reading a word from port 0x1F0, and store to edi
+    pop ecx       ; cx auto decrement
+    loop .next_sector
+    ;End of reading sectors into memory
+    ret
 
 times 510 - ($ - $$) db 0
 dw 0xaa55
