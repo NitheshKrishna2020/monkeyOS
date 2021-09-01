@@ -1,8 +1,3 @@
-; ORG specifies to the assembler that all labels should offset at that address
-; by then setting segment registers to 0 we ensure that during absolute address
-; calculation SEG * 16 + offset will always get the correct address
-; previous ORG = 0, DS = 0x7c0, it doesn't matter to set ORG to 0x7c00
-
 org 0x7c00
 bits 16
 jmp 0:start 
@@ -28,14 +23,6 @@ start:
     mov eax, cr0
     or eax, 0x1
     mov cr0, eax            ; finish switching protected mode
-
-; Now we're in 32-bit mode, the instruction pipeline contains
-; garbage instructions for 16-bit mode and need to be cleared.
-; We only need to make a far jump to a code segment and an offset.
-; The code segment is the first segment right after the Null segment. 
-; Multiply by eight and we have our segment identifyer.
-; My notes: after switching to protected mode, we are point to gdt_null
-; then use CODE_SEG (0x8h) to access the 32 bits labels
 
     jmp CODE_SEG:load32     ; CODE_SEG is the cs in procted mode
 
@@ -82,6 +69,11 @@ load32:
     mov ss, ax
     mov ebp, 0x00200000
     mov esp, ebp
+
+    ; enable A20 line
+    in al, 0x92
+    or al, 2
+    out 0x92, al
     jmp $
 
 times 510 - ($ - $$) db 0
