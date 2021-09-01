@@ -1,0 +1,1 @@
+Hello kernel message from disk second sector!
