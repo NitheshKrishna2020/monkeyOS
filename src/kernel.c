@@ -21,6 +21,11 @@ void terminal_putchar(int x, int y, char c, char color) {
 
 // write a char to screen, and adjust current position
 void terminal_writechar(char c, char color) {
+    if(c == '\n') {
+        terminal_col = 0;
+        terminal_row += 1;
+        return;
+    }
     terminal_putchar(terminal_col, terminal_row, c, color);
     terminal_col += 1;
     if(terminal_col >= VGA_WIDTH) {
@@ -53,14 +58,22 @@ size_t strlen(const char* str) {
 }
 
 void print(const char* str) {
+    int color = 1;
     size_t len = strlen(str);
-    for(int i = 0; i < len; i++) {
-        terminal_writechar(str[i], 15);
+    for(int j = 0; j < 10000; j++) {
+        for(int i = 0; i < len; i++) {
+            terminal_writechar(str[i], color);
+            color+=1;
+            if(color == 15) {
+                color = 1;
+            }
+        }
     }
+
 }
 
 
 void kernel_main() {
     terminal_initialize();
-    print("Hello World");
+    print("Hello Kernel       ");
 }
