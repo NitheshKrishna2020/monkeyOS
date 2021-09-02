@@ -1,6 +1,7 @@
 #include "kernel.h"
 #include <stdint.h>
 #include <stddef.h>
+#include "idt/idt.h"
 
 // init the video memory pointer
 uint16_t* video_mem = 0;
@@ -58,22 +59,24 @@ size_t strlen(const char* str) {
 }
 
 void print(const char* str) {
-    int color = 1;
     size_t len = strlen(str);
-    for(int j = 0; j < 10000; j++) {
-        for(int i = 0; i < len; i++) {
-            terminal_writechar(str[i], color);
+    int color = 2;
+    for(int i = 0; i < len; i++) {
+        terminal_writechar(str[i], color);
+        if(color == 10) {
+            color = 1;
+        }  
+        else {
             color+=1;
-            if(color == 15) {
-                color = 1;
-            }
         }
     }
-
 }
 
+extern void problem();
 
 void kernel_main() {
     terminal_initialize();
-    print("Hello Kernel       ");
+    print("Hello Kernel\n");
+    idt_init();
+    problem();
 }
