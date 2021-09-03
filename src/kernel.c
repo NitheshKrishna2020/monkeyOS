@@ -79,6 +79,4 @@ void kernel_main() {
     terminal_initialize();
     print("Hello Kernel\n");
     idt_init();
-    //problem();
-    outb(0x60, 0xff);
 }
