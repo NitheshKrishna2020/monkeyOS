@@ -79,4 +79,6 @@ void kernel_main() {
     terminal_initialize();
     print("Hello Kernel\n");
     idt_init();
+    
+    enable_interrupts();   
 }
