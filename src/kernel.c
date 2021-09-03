@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include "idt/idt.h"
+#include "io/io.h"
 
 // init the video memory pointer
 uint16_t* video_mem = 0;
@@ -78,5 +79,6 @@ void kernel_main() {
     terminal_initialize();
     print("Hello Kernel\n");
     idt_init();
-    problem();
+    //problem();
+    outb(0x60, 0xff);
 }
