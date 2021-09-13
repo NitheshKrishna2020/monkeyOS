@@ -1,0 +1,66 @@
+(gdb) target remote | qemu-system-i386 -hda ./os.bin -S -gdb stdio
+Remote debugging using | qemu-system-i386 -hda ./os.bin -S -gdb stdio
+WARNING: Image format was not specified for './os.bin' and probing guessed raw.
+         Automatically detecting the format is dangerous for raw images, write operations on block 0 will be restricted.
+         Specify the 'raw' format explicitly to remove the restrictions.
+warning: No executable has been specified and target does not support
+determining executable automatically.  Try using the "file" command.
+0x0000fff0 in ?? ()
+(gdb) add-symbol-file ../build/kernelfull.o 0x100000
+add symbol table from file "../build/kernelfull.o" at
+        .text_addr = 0x100000
+(y or n) y
+Reading symbols from ../build/kernelfull.o...
+(gdb) break kernel.c:91
+Breakpoint 1 at 0x1004a6: file ./src/kernel.c, line 91.
+(gdb) c
+Continuing.
+
+Breakpoint 1, kernel_main () at ./src/kernel.c:91
+91          if(ptr || ptr2 || ptr3) {
+(gdb) print ptr
+$1 = (void *) 0x1000000
+(gdb) print ptr2
+$2 = (void *) 0x1001000
+(gdb) print ptr3
+$3 = (void *) 0x1003000
+(gdb)
+
+
+
+
+
+
+(gdb) add-symbol-file ../build/kernelfull.o 0x100000
+add symbol table from file "../build/kernelfull.o" at
+        .text_addr = 0x100000
+(y or n) y
+Reading symbols from ../build/kernelfull.o...
+(gdb) target remote | qemu-system-i386 -hda ./os.bin -S -gdb stdio
+Remote debugging using | qemu-system-i386 -hda ./os.bin -S -gdb stdio
+WARNING: Image format was not specified for './os.bin' and probing guessed raw.
+         Automatically detecting the format is dangerous for raw images, write operations on block 0 will be restricted.
+         Specify the 'raw' format explicitly to remove the restrictions.
+warning: No executable has been specified and target does not support
+determining executable automatically.  Try using the "file" command.
+0x0000fff0 in ?? ()
+(gdb) break kernel.c:93
+Breakpoint 1 at 0x1004d7: file ./src/kernel.c, line 93.
+(gdb) c
+Continuing.
+
+Breakpoint 1, kernel_main () at ./src/kernel.c:93
+93          if(ptr || ptr2 || ptr3 || ptr4) {
+(gdb) print ptr
+$1 = (void *) 0x1000000
+(gdb) print ptr2
+$2 = (void *) 0x1001000
+(gdb) print ptr3
+$3 = (void *) 0x1003000
+(gdb) print ptr4
+$4 = (void *) 0x1000000
+(gdb) 
+
+
+
+

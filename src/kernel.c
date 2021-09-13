@@ -3,6 +3,8 @@
 #include <stddef.h>
 #include "idt/idt.h"
 #include "io/io.h"
+#include "memory/heap/kheap.h"
+
 
 // init the video memory pointer
 uint16_t* video_mem = 0;
@@ -78,7 +80,17 @@ extern void problem();
 void kernel_main() {
     terminal_initialize();
     print("Hello Kernel\n");
-    idt_init();
     
-    enable_interrupts();   
+    // init the heap
+    kheap_init();
+    
+    idt_init();
+    void* ptr = kmalloc(50);
+    void* ptr2 = kmalloc(5000);
+    void* ptr3 = kmalloc(5600);
+    kfree(ptr);
+    void* ptr4 = kmalloc(50);
+    if(ptr || ptr2 || ptr3 || ptr4) {
+        print("error");
+    }
 }
